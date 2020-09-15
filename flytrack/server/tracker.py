@@ -1,0 +1,2 @@
+class FlyCentroidTracker:
+    pass

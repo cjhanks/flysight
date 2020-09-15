@@ -1,0 +1,75 @@
+// vim: ts=2 et
+//
+// COORDINATE SYSTEM:
+//
+// (0, 0)+------> (cols)
+//       |
+//       |
+//       V (rows)
+//
+// STORAGE ORDER: ROW MAJOR
+//  r0c0 r0c1 r0c2
+//  r1c0 r1c1 r1c2
+//  r2c0 r2c1 r2c2
+//
+//  Linear: [r0c0, r0c1, r0c2, r1c0, r1c1, r1c2, r2c0, r2c1, r2c2]
+//
+syntax = 'proto2';
+
+message Image {
+  required uint32 rows = 1;
+  required uint32 cols = 2;
+  required bytes  data = 3;
+};
+
+message PixelCoordinate {
+  required float row = 1;
+  required float col = 2;
+};
+
+// {
+message ReqDetections {
+  // The image which sould be processed.
+  required Image image            = 1;
+
+  // Return the heatmap Image data
+  optional bool  return_heatmap   = 2 [default=true ];
+
+  // The returned heatmap should be upsampled to the original size.
+  optional bool  upsample_heatmap = 3 [default=false];
+
+  // Compute the peals and return the pixel coordinates.
+  optional bool  return_peaks     = 4 [default=false];
+
+};
+
+message RepDetections {
+  optional Image           heatmap = 1;
+  repeated PixelCoordinate peaks   = 2;
+};
+// }
+
+// {
+message ReqTracking {
+  optional string          context = 1;
+  required Image           heatmap = 2;
+  repeated PixelCoordinate peaks   = 3;
+};
+
+message Track {
+  required PixelCoordinate coordinate = 1;
+  required uint32          track_id   = 2;
+};
+
+message RepTracking {
+  required string context = 1;
+  repeated Track  tracks  = 2;
+};
+// }
+
+message Request {
+  oneof request {
+    ReqDetections detections = 1;
+    ReqTracking   tracking   = 2;
+  }
+};
