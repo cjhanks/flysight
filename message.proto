@@ -51,7 +51,7 @@ message RepDetections {
 
 // {
 message ReqTracking {
-  optional string          context = 1;
+  optional bytes           context = 1;
   required Image           heatmap = 2;
   repeated PixelCoordinate peaks   = 3;
 };
