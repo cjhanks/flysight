@@ -24,7 +24,7 @@ class MainDisplay(QtWidgets.QMainWindow):
         self.frame_count  = self.reader.get(cv2.CAP_PROP_FRAME_COUNT)
         self.frame_width  = self.reader.get(cv2.CAP_PROP_FRAME_WIDTH)
         self.frame_height = self.reader.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        self.resize(self.frame_width, self.frame_height)
+        #self.resize(self.frame_width, self.frame_height)
 
         self.setup_ui()
 
@@ -53,12 +53,17 @@ class MainDisplay(QtWidgets.QMainWindow):
         self.slider.sliderReleased.connect(self.changed_frame_index)
         # }
 
+        self.zoom = DisplayZoom(self)
+        self.zoom.setSizePolicy(
+                QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                      QtWidgets.QSizePolicy.Fixed))
+        self.layout.addWidget(self.zoom, 1, 1, 1, 1, QtCore.Qt.AlignTop)
+
         # Add the display.
         self.display = \
                 DisplayTool(self, self.client, self.frame_width,
                             self.frame_height)
-
-        self.layout.addWidget(self.display, 1, 0, 1, 2)
+        self.layout.addWidget(self.display, 1, 0, 1, 1)
 
         # {
         menubar = self.menuBar()
@@ -92,15 +97,47 @@ class MainDisplay(QtWidgets.QMainWindow):
             print('Failed to read from video stream.')
             return
 
-        self.display.load_image(image)
+        self.display.load_image(frame_idx, image)
 
+    def update_zoom(self, image):
+        self.zoom.update_image(image)
+
+class DisplayZoom(QtWidgets.QWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.image = None
+
+    def update_image(self, image):
+        self.image = image
+        self.update()
+
+    def sizeHint(self):
+        return QtCore.QSize(128, 128)
+
+    def paintEvent(self, ev):
+        if self.image is None:
+            return
+
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        try:
+            painter.drawPixmap(0, 0, self.image)
+        except Exception as err:
+            print(err)
+        painter.end()
 
 class DisplayTool(QtWidgets.QWidget):
     def __init__(self, parent, client, width, height):
         super().__init__(parent)
+        self.p = parent
         self.client = client
         self.resize(width, height)
         self.setup_ui()
+
+        # {
+        self.frame_idx = -1
+        self.last_frame_idx = -2
+        # }
 
         # {
         self.image = None
@@ -115,15 +152,28 @@ class DisplayTool(QtWidgets.QWidget):
         policy.setVerticalStretch(0)
         policy.setHeightForWidth(False)
         self.setSizePolicy(policy)
+        self.setMouseTracking(True)
 
     @QtCore.Slot('set_show_image')
     def set_show_image(self):
         print('HERE')
 
-    def load_image(self, image):
+    def load_image(self, frame_idx, image):
         self.image = image[:, :, 0].copy()
         (self.heatmap, self.peaks) = self.client.detect(self.image)
+        self.frame_idx = frame_idx
         self.update()
+
+    def mouseMoveEvent(self, e):
+        screen = QtWidgets.QApplication.primaryScreen()
+        region = screen.grabWindow(
+                        self.winId(),
+                        e.x() - 32,
+                        e.y() - 32,
+                        64,
+                        64)
+        region = region.scaled(128, 128)
+        self.p.update_zoom(region)
 
     def paintEvent(self, e):
         painter = QtGui.QPainter()
@@ -138,9 +188,8 @@ class DisplayTool(QtWidgets.QWidget):
         if self.peaks is not None:
             self.__draw_peaks(painter)
 
-        self.image = None
-        self.heatmap = None
-        self.peaks = None
+        self.last_frame_idx = self.frame_idx
+
         painter.end()
 
     def __draw_base(self, painter):
