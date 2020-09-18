@@ -1,0 +1,7 @@
+QLCDNumber {
+  background-color: #000000;
+  border: 2px solid #404040;
+  border-width: 2px;
+  border-radius: 10px;
+  color: #f67c25;
+}

@@ -7,6 +7,7 @@ from flytrack.server.main import main as server_main
 
 
 def main(argv=None):
+    # Configuration parsing.
     argp = ArgumentParser()
     argp.add_argument(
             '--video',
@@ -21,13 +22,14 @@ def main(argv=None):
     path = args.config or join(dirname(__file__), 'config.yml')
     Config.Load(path)
 
-    #
+    # Initialize the server in a separate process, we set the `daemon` parameter
+    # since it makes it life easier on shutdown.
     server_handle = Process(target=server_main)
     server_handle.daemon = True
     server_handle.start()
-    client_main(args.video)
 
-    # Close down the server.
+    # Start the client GUI.
+    client_main(args.video)
 
 if __name__ == '__main__':
     main()

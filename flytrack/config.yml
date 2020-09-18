@@ -1,0 +1,29 @@
+# vim: sw=2 ts=2 et
+#
+# Flysight configuration options.
+#
+
+#
+# TensorFlow learned model.
+#
+model:
+  url: 'https://www.dropbox.com/s/kuyqdopree4fh0r/best_model.h5?dl=1'
+  cache: '/tmp'
+
+#
+# Networking options for configuring the ZMQ TCP connection.
+#
+networking:
+  port: 8003
+
+#
+# Configuration options for detecting the centroid of the detected fly.
+#
+centroid_detector:
+  # In a heat map,
+  coef_maximum_threshold: 0.5
+
+  # In the tensor for the nonmax-suppression, this is the dimension of
+  # the square matrix.
+  nonmax_suppression_dim: 3
+
