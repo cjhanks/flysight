@@ -2,6 +2,11 @@ VIRTUAL_ENV=${PWD}/venv
 ARGS=
 
 .ONESHELL:
+fetch:
+	cd data
+	./get.sh
+
+.ONESHELL:
 protocol:
 	protoc message.proto --python_out flytrack/
 

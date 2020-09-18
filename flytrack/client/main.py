@@ -213,8 +213,13 @@ class MainDisplay(QtWidgets.QMainWindow):
 
     def open_video(self):
         """
+        Create an open dialog for the video.
         """
-        (path, _) = QtWidgets.QFileDialog.getOpenFileName(self, '*.mp4')
+        (path, _) = QtWidgets.QFileDialog.getOpenFileName(
+                        self,
+                        'Video file',
+                        None,
+                        'Images (*.mp4)')
         if exists(path):
             self.load_video(path)
 
