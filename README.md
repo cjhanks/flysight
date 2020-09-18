@@ -1,6 +1,6 @@
 # flysight
 
-Visual display tool for observing heatmaps, peak detections, and frames 
+Visual display tool for observing heatmaps, peak detections, and frames
 from video.
 
 ![Example](.readme/sc1.png)
@@ -56,6 +56,7 @@ cd data
 ### Command
 
 `Open` opens a new video file.
+
 `Save` will save the currently rendered image to disk as a PNG.
 `Quit` you can guess.
 
@@ -67,14 +68,14 @@ provided video stream.
 `Show Peaks` requests the renderer to display arrows pointing at the
 pixel selected from nonmax-suppression.
 
-`Show Heatmap` requests the renderer to display the heatmap.  If the 
+`Show Heatmap` requests the renderer to display the heatmap.  If the
 image is also shown, it will set an alpha channel such that you can
 see the heatmap overlaid on the image.
 
 ## Debugging
 
-If you are receiving complaints from `protobuf`, you may need to 
-generate the protofiles for your system.  This will require you 
+If you are receiving complaints from `protobuf`, you may need to
+generate the protofiles for your system.  This will require you
 installing `protoc`.  On ubuntu, `apt-get install protobuf-compiler`.
 
 Then run, `make proto`.
