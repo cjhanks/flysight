@@ -53,6 +53,22 @@ cd data
 ./get.sh
 ```
 
+## Configuration
+
+In `flytrack/config.yml` there is a set of default configuration 
+options.  Options are documented in this file.  If you wish to change
+them, you can pass them into the program by either running;
+
+```
+flytrack --config ./path/to/config.yml
+```
+
+OR 
+
+```
+make run ARGS="--config ./path/to/config.yml"
+```
+
 ### Command
 
 `Open` opens a new video file.
