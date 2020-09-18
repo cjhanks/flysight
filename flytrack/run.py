@@ -11,7 +11,7 @@ def main(argv=None):
     argp = ArgumentParser()
     argp.add_argument(
             '--video',
-            required=True)
+            required=False)
     argp.add_argument(
             '--config',
             default=None)

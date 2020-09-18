@@ -1,4 +1,5 @@
 VIRTUAL_ENV=${PWD}/venv
+ARGS=
 
 .ONESHELL:
 protocol:
@@ -12,7 +13,8 @@ dep:
 	. ${VIRTUAL_ENV}/bin/activate
 	pip3 install -r requirements.txt
 
-#.ONESHELL:
-#run:
-#	. ${VIRTUAL_ENV}/bin/activate
-#	python3 app
+.ONESHELL:
+run:
+	export PYTHONPATH=${PYTHONPATH}:$(PWD)
+	. ${VIRTUAL_ENV}/bin/activate
+	python3 flytrack/run.py $(ARGS)

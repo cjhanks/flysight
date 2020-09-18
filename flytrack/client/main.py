@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from os.path import exists
 import cv2
 import numpy as np
 from PySide2 import (
@@ -20,16 +21,15 @@ class MainDisplay(QtWidgets.QMainWindow):
     Implements the main display for the GUI.  This is where the majority of the
     GUI logic lives.
     """
-    def __init__(self, video: str):
+    def __init__(self, video=None):
         super().__init__()
+        if video:
+            self.load_video(video)
 
-        # Construct the OpenCV video capture object and extract some relevant
-        # metadata which can be used to initialize various window sizes.
-        self.reader = cv2.VideoCapture(video)
-        self.frame_count  = self.reader.get(cv2.CAP_PROP_FRAME_COUNT)
-        self.frame_width  = self.reader.get(cv2.CAP_PROP_FRAME_WIDTH)
-        self.frame_height = self.reader.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        self.resize(self.frame_width - 256, self.frame_height)
+        self.frame_count  = 0
+        self.frame_width  = 0
+        self.frame_height = 0
+        self.reader       = None
 
         # Initialize the ZMQ socket connection.
         self.client = Client('tcp://127.0.0.1:{}'.format(
@@ -39,6 +39,18 @@ class MainDisplay(QtWidgets.QMainWindow):
         self.setup_ui()
 
         # Initialize to frame 0.
+        self.changed_frame_index()
+
+    def load_video(self, video):
+        # Construct the OpenCV video capture object and extract some relevant
+        # metadata which can be used to initialize various window sizes.
+        self.reader = cv2.VideoCapture(video)
+        self.frame_count  = self.reader.get(cv2.CAP_PROP_FRAME_COUNT)
+        self.frame_width  = self.reader.get(cv2.CAP_PROP_FRAME_WIDTH)
+        self.frame_height = self.reader.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        self.resize(self.frame_width - 256, self.frame_height)
+
+        self.slider.setMaximum(self.frame_count)
         self.changed_frame_index()
 
     def setup_ui(self):
@@ -121,13 +133,16 @@ class MainDisplay(QtWidgets.QMainWindow):
         # Menu bar for the `Command` section.
         menubar = self.menuBar()
         options = menubar.addMenu('Command')
+        menu_open = options.addAction('Open')
+        menu_open.setShortcut(QtGui.QKeySequence('Ctrl+O'))
+        menu_open.triggered.connect(self.open_video)
+
         menu_save = options.addAction('Save')
         menu_save.setShortcut(QtGui.QKeySequence('Ctrl+S'))
         menu_save.triggered.connect(self.save_image)
 
-        menu_help = options.addAction('Help')
-
         menu_exit = options.addAction('Exit')
+        menu_exit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         menu_exit.triggered.connect(QtWidgets.QApplication.quit)
         # }
 
@@ -160,6 +175,9 @@ class MainDisplay(QtWidgets.QMainWindow):
         Load the image from the LCD value (since it is canonical), and trigger
         a display change.
         """
+        if self.reader is None:
+            return
+
         frame_idx = int(self.lcd.value())
         self.reader.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
 
@@ -193,6 +211,13 @@ class MainDisplay(QtWidgets.QMainWindow):
         region = self.display.grab()
         region.save(path)
 
+    def open_video(self):
+        """
+        """
+        (path, _) = QtWidgets.QFileDialog.getOpenFileName(self, '*.mp4')
+        if exists(path):
+            self.load_video(path)
+
 
 def main(video: str):
     """
@@ -207,7 +232,7 @@ if __name__ == '__main__':
     argp = ArgumentParser()
     argp.add_argument(
             '--video',
-            required=True)
+            required=False)
     args = argp.parse_args(argv)
 
     main(args.video)
