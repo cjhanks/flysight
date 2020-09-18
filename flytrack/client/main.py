@@ -187,9 +187,10 @@ class MainDisplay(QtWidgets.QMainWindow):
                         'Save: F:xile',
                         'image_%04d.png' % frame_idx,
                         'Images (*.png *.jpg)')
+        if not path:
+            return
+
         region = self.display.grab()
-        print(path)
-        print(type(path))
         region.save(path)
 
 
