@@ -1,19 +1,17 @@
 import numpy as np
 import tensorflow as tf
+from flytrack.config import Config
 
-
-DEFAULT_MODEL_URL = \
-        'https://www.dropbox.com/s/kuyqdopree4fh0r/best_model.h5?dl=1'
 
 class FlyCentroidDetector:
-    DEFAULT_MODEL_URL = DEFAULT_MODEL_URL
-
-    def __init__(self, cache_directory='/tmp', model_url=DEFAULT_MODEL_URL):
+    def __init__(self):
+        url   = Config.Instance.model.url
+        cache = Config.Instance.model.cache
         model_path = tf.keras.utils.get_file(
                                 'model.h5',
-                                model_url,
+                                url,
                                 extract=False,
-                                cache_subdir=cache_directory)
+                                cache_subdir=cache)
         self.__model = tf.keras.models.load_model(model_path, compile=False)
 
     def generate_heatmap(self, img, upsample_heatmap=False):
@@ -38,7 +36,9 @@ class FlyCentroidDetector:
 
     def find_centroids(self, img):
         # Use max pooling to find the centroid.
-        max_pooled = tf.nn.pool(img, window_shape=(3, 3),
+        dim = (Config.Instance.centroid_detector.nonmax_suppression_dim,
+               Config.Instance.centroid_detector.nonmax_suppression_dim)
+        max_pooled = tf.nn.pool(img, window_shape=dim,
                                 pooling_type='MAX',
                                 padding='SAME')
         maxima = tf.where(tf.equal(img, max_pooled), img, tf.zeros_like(img))
@@ -50,7 +50,9 @@ class FlyCentroidDetector:
         maximum = tf.math.reduce_max(maxima)
 
         # Find the indices of the local maximums
-        indices = tf.where(maxima > 0.5 * maximum).numpy().astype(np.float64)
+        threshold = Config.Instance.centroid_detector.coef_maximum_threshold
+        indices = tf.where(maxima > threshold * maximum).numpy(
+                          ).astype(np.float64)
         indices /= tf.squeeze(img).shape
 
         # Tensorflow column/row conventions are opposite of what is desired

@@ -23,9 +23,6 @@ class DisplayZoom(QtWidgets.QWidget):
 
         painter = QtGui.QPainter()
         painter.begin(self)
-        try:
-            painter.drawPixmap(0, 0, self.image)
-        except Exception as err:
-            print(err)
+        painter.drawPixmap(0, 0, self.image)
         painter.end()
 

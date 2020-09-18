@@ -6,20 +6,22 @@ from PySide2 import (
         QtCore,
         QtGui,
         )
+from flytrack.config import Config
 from flytrack.client import Client
 from flytrack.client.display_main import DisplayMain
 from flytrack.client.display_zoom import DisplayZoom
 
 
 class MainDisplay(QtWidgets.QMainWindow):
-    def __init__(self, video, port):
+    def __init__(self, video):
         super().__init__()
         #self.setStyleSheet('''
         #background: #00000000;
         #''')
 
         self.reader = cv2.VideoCapture(video)
-        self.client = Client('tcp://127.0.0.1:%d' % port)
+        self.client = Client('tcp://127.0.0.1:{}'.format(
+                                Config.Instance.networking.port))
 
         self.frame_count  = self.reader.get(cv2.CAP_PROP_FRAME_COUNT)
         self.frame_width  = self.reader.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -188,9 +190,9 @@ QLCDNumber{
 
 
 
-def main(video, port):
+def main(video):
     app = QtWidgets.QApplication([""])
-    main = MainDisplay(video, port)
+    main = MainDisplay(video)
     main.show()
     app.exec_()
 

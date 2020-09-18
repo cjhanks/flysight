@@ -4,23 +4,22 @@ This file is responsible for implementing a server side `main` function.
 import numpy as np
 import tensorflow as tf
 import zmq
+from flytrack.config import Config
 from flytrack.message_pb2 import (
         Request,
         RepTracking,
         RepDetections,
         )
 from flytrack.server.solver import FlyCentroidDetector
-#from flytrack.server.tracker import FlyCentroidTracker
 
 
-def main(zmq_port, cache_directory,
-         model_url=FlyCentroidDetector.DEFAULT_MODEL_URL):
-    detector = FlyCentroidDetector(cache_directory, model_url)
+def main():
+    detector = FlyCentroidDetector()
     tracker = None
 
     ctx = zmq.Context()
     socket = ctx.socket(zmq.REP)
-    socket.bind('tcp://*:{}'.format(zmq_port))
+    socket.bind('tcp://*:{}'.format(Config.Instance.networking.port))
 
     while True:
         message = socket.recv()
