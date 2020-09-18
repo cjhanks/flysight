@@ -123,6 +123,7 @@ class MainDisplay(QtWidgets.QMainWindow):
         options = menubar.addMenu('Command')
         menu_save = options.addAction('Save')
         menu_save.setShortcut(QtGui.QKeySequence('Ctrl+S'))
+        menu_save.triggered.connect(self.save_image)
 
         menu_help = options.addAction('Help')
 
@@ -174,6 +175,23 @@ class MainDisplay(QtWidgets.QMainWindow):
         down to the zoom object.
         """
         self.zoom.update_image(image)
+
+    def save_image(self):
+        """
+        Grab the entire `display` element and save it to an image specified
+        by a file dialog box.
+        """
+        frame_idx = int(self.lcd.value())
+        (path, _) = QtWidgets.QFileDialog.getSaveFileName(
+                        self,
+                        'Save: F:xile',
+                        'image_%04d.png' % frame_idx,
+                        'Images (*.png *.jpg)')
+        region = self.display.grab()
+        print(path)
+        print(type(path))
+        region.save(path)
+
 
 def main(video: str):
     """
