@@ -58,6 +58,7 @@ cd data
 `Open` opens a new video file.
 
 `Save` will save the currently rendered image to disk as a PNG.
+
 `Quit` you can guess.
 
 ### Display
