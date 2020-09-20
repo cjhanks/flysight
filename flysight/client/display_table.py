@@ -1,5 +1,3 @@
-from PySide2.QtCore import Qt, QAbstractTableModel, QModelIndex
-from PySide2.QtGui import QColor
 from PySide2 import (
         QtWidgets,
         QtCore,
@@ -61,7 +59,7 @@ class TrackerTableView(QtWidgets.QTableView):
         QtWidgets.QApplication.clipboard().setText('\n'.join(lines))
 
 
-class TrackerTableModel(QAbstractTableModel):
+class TrackerTableModel(QtCore.QAbstractTableModel):
     """
     :class TrackerTableModel:
 
@@ -79,8 +77,8 @@ class TrackerTableModel(QAbstractTableModel):
     """
     Columns = ['Id', 'X', 'Y']
 
-    def __init__(self):
-        QAbstractTableModel.__init__(self)
+    def __init__(self, parent):
+        super().__init__(parent)
 
         self.col_count = len(self.Columns)
         self.peaks = []
@@ -98,15 +96,15 @@ class TrackerTableModel(QAbstractTableModel):
         self.endInsertRows()
         self.endResetModel()
 
-    def rowCount(self, parent=QModelIndex()):
+    def rowCount(self, parent=QtCore.QModelIndex()):
         return len(self.peaks)
 
-    def columnCount(self, parent=QModelIndex()):
+    def columnCount(self, parent=QtCore.QModelIndex()):
         return self.col_count
 
     def headerData(self, section, orientation, role):
-        if role == Qt.DisplayRole:
-            if orientation == Qt.Horizontal:
+        if role == QtCore.Qt.DisplayRole:
+            if orientation == QtCore.Qt.Horizontal:
                 return self.Columns[section]
             else:
                 return "{}".format(section)
@@ -116,11 +114,11 @@ class TrackerTableModel(QAbstractTableModel):
              | QtCore.Qt.ItemIsEnabled      \
              | QtCore.Qt.ItemIsSelectable
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=QtCore.Qt.DisplayRole):
         col = index.column()
         row = index.row()
 
-        if role != Qt.DisplayRole:
+        if role != QtCore.Qt.DisplayRole:
             return
 
         r = self.peaks[row]

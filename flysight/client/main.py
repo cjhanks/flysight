@@ -18,7 +18,6 @@ from flysight.client.display_table import (
 from flysight.client.resource_loader import Resource
 
 
-
 class MainDisplay(QtWidgets.QMainWindow):
     """
     :class MainDisplay:
@@ -156,12 +155,12 @@ class MainDisplay(QtWidgets.QMainWindow):
         # {
         # Add a table which is capable of displaying row/columns of the XY
         # values for detected peaks.
-        table = TrackerTableView()
+        table = TrackerTableView(self.central)
         table.setSizePolicy(
                 QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                       QtWidgets.QSizePolicy.Fixed))
         self.table_view = table
-        self.table = TrackerTableModel()
+        self.table = TrackerTableModel(self.central)
         table.setModel(self.table)
         self.layout.addWidget(table, 2, 2, 1, 1)
         # }
