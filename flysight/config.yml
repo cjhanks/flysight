@@ -25,5 +25,5 @@ centroid_detector:
 
   # In the tensor for the nonmax-suppression, this is the dimension of
   # the square matrix.
-  nonmax_suppression_dim: 3
+  nonmax_suppression_dim: 5
 

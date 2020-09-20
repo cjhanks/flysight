@@ -34,7 +34,7 @@ class DisplayMain(QtWidgets.QWidget):
         # {
         self.image = None
         self.heatmap = None
-        self.peaks = None
+        self.peaks = []
         # }
 
     def setup_ui(self):
