@@ -17,7 +17,7 @@ This code was tested on ubuntu 20.04.  It required these apt packages.
 apt-get install -y  \
   python3           \
   python3-venv      \
-  automake
+  build-essential
 
 ## Build
 
