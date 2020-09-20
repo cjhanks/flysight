@@ -9,6 +9,16 @@ from video.
 
 Run `make`.
 
+## Environment
+
+This code was tested on ubuntu 20.04.  It required these apt packages.
+
+```
+apt-get install -y  \
+  python3           \
+  python3-venv      \
+  automake
+
 ## Build
 
 The recommended way to run this program is through use of the top-level
