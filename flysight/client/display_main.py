@@ -108,7 +108,9 @@ class DisplayMain(QtWidgets.QWidget):
         - Use the ZMQ client to fetch a heatmap/peak solution
         - Refresh the UI
         """
-        self.image = image[:, :, 0].copy()
+        self.image = image[:, :, 0]
+        #self.image = np.transpose(self.image).copy()
+        self.image = self.image.copy()
         (self.heatmap, self.peaks) = self.client.detect(self.image)
         self.frame_idx = frame_idx
         self.update()

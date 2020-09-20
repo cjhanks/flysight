@@ -74,8 +74,8 @@ def handle_detection(
         peaks = detector.find_peaks(heatmap)
         for peak in peaks:
             rpeak = rep.peaks.add()
-            rpeak.row = peak[0]
-            rpeak.col = peak[1]
+            rpeak.row = peak[1]
+            rpeak.col = peak[0]
 
     # If the requester wants the heatmap returned, package it.
     if req.return_heatmap:

@@ -73,7 +73,7 @@ class FlyCentroidDetector:
 
         # Tensorflow column/row conventions are opposite of what is desired
         # for this application.
-        indices[:,[0, 1]] = indices[:,[1, 0]]
+        #indices[:,[0, 1]] = indices[:,[1, 0]]
 
         return indices
 
