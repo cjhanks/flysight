@@ -7,11 +7,16 @@ from PySide2 import (
         QtCore,
         QtGui,
         )
-from flytrack.config import Config
-from flytrack.client import Client
-from flytrack.client.display_main import DisplayMain
-from flytrack.client.display_zoom import DisplayZoom
-from flytrack.client.resource_loader import Resource
+from flysight.config import Config
+from flysight.client import Client
+from flysight.client.display_main import DisplayMain
+from flysight.client.display_zoom import DisplayZoom
+from flysight.client.display_table import (
+        TrackerTableView,
+        TrackerTableModel,
+        )
+from flysight.client.resource_loader import Resource
+
 
 
 class MainDisplay(QtWidgets.QMainWindow):
@@ -23,8 +28,6 @@ class MainDisplay(QtWidgets.QMainWindow):
     """
     def __init__(self, video=None):
         super().__init__()
-        if video:
-            self.load_video(video)
 
         self.frame_count  = 0
         self.frame_width  = 0
@@ -37,6 +40,9 @@ class MainDisplay(QtWidgets.QMainWindow):
 
         # Configure UI
         self.setup_ui()
+
+        if video:
+            self.load_video(video)
 
         # Initialize to frame 0.
         self.changed_frame_index()
@@ -61,6 +67,24 @@ class MainDisplay(QtWidgets.QMainWindow):
         # configure the layout.
         self.central = QtWidgets.QWidget(self)
         self.setCentralWidget(self.central)
+
+        # Layout organization:
+        #
+        # A - Slider
+        # B - LCD
+        # C - Main Display
+        # D - Zoom
+        # E - Tabular peak data.
+        #
+        # +---+---+---+
+        # | A  A  | B |
+        # +---+---+---+
+        # | C   C | D |
+        # +       +   |
+        # | C   C | E |
+        # +---+---+---+
+        #
+        # addWidget(... fromRow, fromColumn, rowSpan, columnSpan)
         self.layout = QtWidgets.QGridLayout(self.central)
 
         # {
@@ -70,17 +94,17 @@ class MainDisplay(QtWidgets.QMainWindow):
         self.slider.setOrientation(QtCore.Qt.Horizontal)
         self.slider.setMaximum(self.frame_count)
         self.slider.setSizePolicy(
-                QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
-                                      QtWidgets.QSizePolicy.Minimum))
+                QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                      QtWidgets.QSizePolicy.Fixed))
         self.slider.setStyleSheet(Resource.Get('slider'))
-        self.layout.addWidget(self.slider, 0, 0, 1, 1)
+        self.layout.addWidget(self.slider, 0, 0, 1, 2)
 
         self.lcd = QtWidgets.QLCDNumber(self)
         self.lcd.setSizePolicy(
                 QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                       QtWidgets.QSizePolicy.Fixed))
         self.lcd.setStyleSheet(Resource.Get('lcd'))
-        self.layout.addWidget(self.lcd, 0, 1, 1, 1,
+        self.layout.addWidget(self.lcd, 0, 2, 1, 1,
                               QtCore.Qt.AlignCenter)
 
         self.slider_blocked = False
@@ -121,13 +145,26 @@ class MainDisplay(QtWidgets.QMainWindow):
         self.zoom.setSizePolicy(
                 QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                       QtWidgets.QSizePolicy.Fixed))
-        self.layout.addWidget(self.zoom, 1, 1, 1, 1, QtCore.Qt.AlignTop)
+        self.layout.addWidget(self.zoom, 1, 2, 1, 1, QtCore.Qt.AlignCenter)
 
         # Add the main display.
         self.display = \
                 DisplayMain(self, self.client, self.frame_width,
                             self.frame_height)
-        self.layout.addWidget(self.display, 1, 0, 1, 1)
+        self.layout.addWidget(self.display, 1, 0, 2, 2)
+
+        # {
+        # Add a table which is capable of displaying row/columns of the XY
+        # values for detected peaks.
+        table = TrackerTableView()
+        table.setSizePolicy(
+                QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                      QtWidgets.QSizePolicy.Fixed))
+        self.table_view = table
+        self.table = TrackerTableModel()
+        table.setModel(self.table)
+        self.layout.addWidget(table, 2, 2, 1, 1)
+        # }
 
         # {
         # Menu bar for the `Command` section.
@@ -186,6 +223,11 @@ class MainDisplay(QtWidgets.QMainWindow):
             print('Failed to read from video stream.')
         else:
             self.display.load_image(frame_idx, image)
+
+        # Load the peaks table.
+        self.table.load_data(list(enumerate(self.display.peaks)))
+        self.table_view.resizeColumnsToContents()
+        self.table_view.resizeRowsToContents()
 
     def update_zoom(self, image):
         """

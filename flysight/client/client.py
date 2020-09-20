@@ -1,6 +1,6 @@
 import numpy as np
 import zmq
-from flytrack.message_pb2 import (
+from flysight.message_pb2 import (
         Request,
         RepDetections,
         RepTracking,

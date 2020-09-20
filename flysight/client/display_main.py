@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import cm
-from flytrack.client.display_zoom import DisplayZoom
+from flysight.client.display_zoom import DisplayZoom
 from PySide2 import (
         QtWidgets,
         QtCore,

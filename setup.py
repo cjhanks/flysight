@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name='flytrack',
+    name='flysight',
     version="0.0.1",
     author='CjHanks',
     author_email="web@cjhanks.name",
@@ -23,16 +23,16 @@ setuptools.setup(
         'tensorflow==2.3.0',
     ],
     entry_points = {
-        'console_scripts': ['flytrack=flytrack.run:main'],
+        'console_scripts': ['flysight=flysight.run:main'],
     },
     data_files=[
 
-        ('flytrack', [
-            'flytrack/config.yml'
+        ('flysight', [
+            'flysight/config.yml'
         ]),
-        ('flytrack/client/resource',    [
-            'flytrack/client/resource/lcd.css',
-            'flytrack/client/resource/slider.css'
+        ('flysight/client/resource',    [
+            'flysight/client/resource/lcd.css',
+            'flysight/client/resource/slider.css'
         ]),
     ],
     python_requires='>=3.6',

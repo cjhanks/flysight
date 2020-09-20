@@ -4,14 +4,14 @@ This file is responsible for implementing a server side `main` function.
 import numpy as np
 import tensorflow as tf
 import zmq
-from flytrack.config import Config
-from flytrack.message_pb2 import (
+from flysight.config import Config
+from flysight.message_pb2 import (
         Request,
         RepTracking,
         ReqDetections,
         RepDetections,
         )
-from flytrack.server.solver import FlyCentroidDetector
+from flysight.server.solver import FlyCentroidDetector
 
 
 def main():

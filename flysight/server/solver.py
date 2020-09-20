@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from flytrack.config import Config
+from flysight.config import Config
 
 
 class FlyCentroidDetector:

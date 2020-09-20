@@ -1,9 +1,9 @@
 from argparse import ArgumentParser
 from multiprocessing import Process
 from os.path import dirname, join
-from flytrack.config import Config
-from flytrack.client.main import main as client_main
-from flytrack.server.main import main as server_main
+from flysight.config import Config
+from flysight.client.main import main as client_main
+from flysight.server.main import main as server_main
 
 
 def main(argv=None):

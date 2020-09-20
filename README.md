@@ -5,6 +5,10 @@ from video.
 
 ![Example](.readme/sc1.png)
 
+## TLDR
+
+Run `make`.
+
 ## Build
 
 The recommended way to run this program is through use of the top-level
@@ -27,7 +31,7 @@ python3 -m venv venv
 python setup.py install
 ```
 
-Then the command will be available as `flytrack`.
+Then the command will be available as `flysight`.
 
 ## Running
 
@@ -55,15 +59,15 @@ cd data
 
 ## Configuration
 
-In `flytrack/config.yml` there is a set of default configuration 
+In `flysight/config.yml` there is a set of default configuration
 options.  Options are documented in this file.  If you wish to change
 them, you can pass them into the program by either running;
 
 ```
-flytrack --config ./path/to/config.yml
+flysight --config ./path/to/config.yml
 ```
 
-OR 
+OR
 
 ```
 make run ARGS="--config ./path/to/config.yml"
