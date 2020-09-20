@@ -80,8 +80,8 @@ def handle_detection(
     # If the requester wants the heatmap returned, package it.
     if req.return_heatmap:
         hm = tf.squeeze(heatmap)
-        rep.heatmap.rows = hm.shape[0]
-        rep.heatmap.cols = hm.shape[1]
+        rep.heatmap.rows = hm.shape[1]
+        rep.heatmap.cols = hm.shape[0]
         rep.heatmap.data = hm.numpy().tobytes()
 
     return rep
