@@ -75,13 +75,13 @@ options.  Options are documented in this file.  If you wish to change
 them, you can pass them into the program by either running;
 
 ```
-flysight --config ./path/to/config.yml
-```
-
-OR
-
-```
 make run ARGS="--config ./path/to/config.yml"
+```
+
+OR (if installed...)
+
+```
+flysight --config ./path/to/config.yml
 ```
 
 ### Command
