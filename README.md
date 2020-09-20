@@ -111,3 +111,15 @@ generate the protofiles for your system.  This will require you
 installing `protoc`.  On ubuntu, `apt-get install protobuf-compiler`.
 
 Then run, `make proto`.
+
+## Improvements
+
+There are several improvements which could occur for this application.
+
+- The display widget should be zoomable and navigable.
+- The zoom widget should not be zooming into the window render buffer,
+  that loses precision.  Rather, it should be rendering from the data
+  independent of the diplay.
+- Some of the default sizings are wonky.
+- The nonmax suppression isn't perfect or tuned.
+
